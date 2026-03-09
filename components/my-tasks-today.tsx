@@ -526,7 +526,8 @@ export function MyTasksToday() {
       console.warn("[v0] Missing task identifier for navigation", task)
       return
     }
-    router.push(`/tasks/${encodeURIComponent(taskIdentifier)}`)
+    console.log("[v0] Opening task detail slide-over for:", taskIdentifier)
+    setSelectedTaskDetailId(taskIdentifier)
   }
 
   const handleStatusChange = async (taskId: string, newStatus: string) => {
