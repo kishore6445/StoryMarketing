@@ -95,23 +95,24 @@ export function SavedFiltersBar({ savedFilters, onSelectFilter, onDeleteFilter, 
       <p className="text-xs font-medium text-[#86868B] uppercase tracking-wide mb-2">Saved Filters</p>
       <div className="flex items-center gap-2 overflow-x-auto pb-2">
         {(favoriteFilters.length > 0 ? favoriteFilters : recentFilters).map((filter) => (
-          <div key={filter.id} className="relative">
+          <div key={filter.id} className="relative flex items-center">
             <button
               onClick={() => onSelectFilter(filter)}
               className="whitespace-nowrap px-3 py-1.5 bg-[#F8F9FB] border border-[#E5E5E7] rounded-full text-xs font-medium text-[#1D1D1F] hover:border-[#007AFF] transition-colors flex items-center gap-2"
             >
               {filter.isFavorite && <Star className="w-3 h-3 text-[#FFB547] fill-[#FFB547]" />}
               {filter.name}
-              <button
-                onClick={(e) => {
-                  e.stopPropagation()
-                  setShowMenu(showMenu === filter.id ? null : filter.id)
-                }}
-                className="text-[#86868B] hover:text-[#1D1D1F]"
-              >
-                ×
-              </button>
             </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                setShowMenu(showMenu === filter.id ? null : filter.id)
+              }}
+              className="ml-1 text-[#86868B] hover:text-[#1D1D1F] leading-none"
+            >
+              ×
+            </button>
+
 
             {showMenu === filter.id && (
               <div className="absolute top-full mt-1 right-0 bg-white border border-[#E5E5E7] rounded-lg shadow-lg z-10 min-w-max">
