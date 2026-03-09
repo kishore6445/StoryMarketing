@@ -43,10 +43,23 @@ export default function TaskWorkspacePage() {
   const [showStatusMenu, setShowStatusMenu] = useState(false)
   const [statusBlocked, setStatusBlocked] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
+  const [isInitializing, setIsInitializing] = useState(true)
   const workspaceTaskId = task?.id || taskId
+
+  // Check authentication and redirect if needed
+  useEffect(() => {
+    const token = localStorage.getItem("sessionToken")
+    if (!token) {
+      router.push("/login")
+      return
+    }
+    setIsInitializing(false)
+  }, [router])
 
   // Fetch task data
   useEffect(() => {
+    if (isInitializing) return
+
     const fetchTask = async () => {
       try {
         setIsLoading(true)
@@ -55,7 +68,7 @@ export default function TaskWorkspacePage() {
         
         if (!token) {
           console.error("[v0] No session token found in localStorage")
-          setTask(null)
+          router.push("/login")
           return
         }
         
@@ -92,7 +105,7 @@ export default function TaskWorkspacePage() {
     if (taskId) {
       fetchTask()
     }
-  }, [taskId, encodedTaskId])
+  }, [taskId, encodedTaskId, isInitializing, router])
 
   const handleStatusChange = async (newStatus: "todo" | "in_progress" | "in_review" | "done") => {
     if (!task) return
@@ -212,7 +225,7 @@ export default function TaskWorkspacePage() {
     navigator.clipboard.writeText(url)
   }
 
-  if (isLoading) {
+  if (isInitializing || isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
