@@ -4,7 +4,7 @@ import { getUserFromToken } from '@/lib/auth'
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await getUserFromToken(request)
@@ -15,7 +15,8 @@ export async function PUT(
     const supabase = getSupabaseAdminClient()
     const body = await request.json()
     const { title, summary, keyDecisions, actionItems } = body
-    const meetingId = params.id
+    const { id } = await params
+    const meetingId = id
 
     console.log('[v0] Updating meeting details for:', meetingId)
 

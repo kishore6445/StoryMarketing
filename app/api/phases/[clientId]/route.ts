@@ -5,7 +5,7 @@ import { validateSession } from "@/lib/auth"
 // GET - Fetch all phase data for a client
 export async function GET(
   request: NextRequest,
-  { params }: { params: { clientId: string } }
+  { params }: { params: Promise<{ clientId: string }> }
 ) {
   try {
     const authHeader = request.headers.get('authorization')
@@ -21,6 +21,7 @@ export async function GET(
     }
 
     const supabase = getSupabaseAdminClient()
+    const { clientId } = await params
     
     // Fetch client phases with sections, tasks, and documents
     const { data: phases, error: phasesError } = await supabase
@@ -34,7 +35,7 @@ export async function GET(
         ),
         phase_strategy (*)
       `)
-      .eq('client_id', params.clientId)
+      .eq('client_id', clientId)
       .order('phase_order', { ascending: true })
 
     if (phasesError) {

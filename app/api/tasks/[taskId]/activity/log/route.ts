@@ -3,7 +3,7 @@ import { getSupabaseAdminClient } from "@/lib/db"
 import { validateSession } from "@/lib/auth"
 
 // POST - Create an activity log entry
-export async function POST(request: NextRequest, { params }: { params: { taskId: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ taskId: string }> }) {
   try {
     const authHeader = request.headers.get("authorization")
     const sessionToken = authHeader?.replace("Bearer ", "") || request.cookies.get("session")?.value
@@ -18,7 +18,7 @@ export async function POST(request: NextRequest, { params }: { params: { taskId:
 
     const body = await request.json()
     const { action_type, old_value, new_value, description } = body
-    const taskId = params.taskId
+    const { taskId } = await params
 
     if (!action_type) {
       return NextResponse.json({ error: "action_type is required" }, { status: 400 })

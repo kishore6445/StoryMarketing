@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getSupabaseClient } from '@/lib/db'
 import { verifyAuth } from '@/lib/auth'
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const authResult = await verifyAuth(request)
     if (!authResult.authenticated || !authResult.user) {
@@ -11,7 +11,8 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 
     const body = await request.json()
     const { name, startDate, endDate, status } = body
-    const sprintId = params.id
+    const { id } = await params
+    const sprintId = id
 
     const supabase = getSupabaseClient()
     

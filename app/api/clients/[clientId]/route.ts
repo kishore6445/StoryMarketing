@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { getSupabaseAdminClient } from "@/lib/db"
 import { validateSession } from "@/lib/auth"
 
-export async function PUT(request: NextRequest, { params }: { params: { clientId: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ clientId: string }> }) {
   try {
     // Validate session
     const authHeader = request.headers.get('authorization')
@@ -27,10 +27,11 @@ export async function PUT(request: NextRequest, { params }: { params: { clientId
     if (brandColor !== undefined) updateData.brand_color = brandColor
     if (is_active !== undefined) updateData.is_active = is_active
 
+    const { clientId } = await params
     const { data: client, error } = await supabase
       .from('clients')
       .update(updateData)
-      .eq('id', params.clientId)
+      .eq('id', clientId)
       .select()
       .single()
 
@@ -46,7 +47,7 @@ export async function PUT(request: NextRequest, { params }: { params: { clientId
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { clientId: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ clientId: string }> }) {
   try {
     // Validate session
     const authHeader = request.headers.get('authorization')
@@ -62,12 +63,13 @@ export async function DELETE(request: NextRequest, { params }: { params: { clien
     }
 
     const supabase = getSupabaseAdminClient()
+    const { clientId } = await params
     
     // Soft delete by setting is_active to false
     const { error } = await supabase
       .from('clients')
       .update({ is_active: false })
-      .eq('id', params.clientId)
+      .eq('id', clientId)
 
     if (error) {
       console.error("[v0] Error deleting client:", error)

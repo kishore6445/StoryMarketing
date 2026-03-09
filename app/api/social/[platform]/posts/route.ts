@@ -3,8 +3,8 @@ import { type NextRequest, NextResponse } from "next/server"
 // API Route to fetch posts from a specific platform
 // This will be called by a cron job or on-demand
 
-export async function GET(request: NextRequest, { params }: { params: { platform: string } }) {
-  const { platform } = params
+export async function GET(request: NextRequest, { params }: { params: Promise<{ platform: string }> }) {
+  const { platform } = await params
   const clientId = request.nextUrl.searchParams.get("clientId")
 
   if (!clientId) {

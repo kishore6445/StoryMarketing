@@ -3,7 +3,7 @@ import { getSupabaseAdminClient } from "@/lib/db"
 import { validateSession } from "@/lib/auth"
 
 // GET - Fetch activity log for a task
-export async function GET(request: NextRequest, { params }: { params: { taskId: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ taskId: string }> }) {
   try {
     const authHeader = request.headers.get("authorization")
     const sessionToken = authHeader?.replace("Bearer ", "") || request.cookies.get("session")?.value
@@ -17,7 +17,7 @@ export async function GET(request: NextRequest, { params }: { params: { taskId: 
     }
 
     const supabase = getSupabaseAdminClient()
-    const taskId = params.taskId
+    const { taskId } = await params
 
     console.log("[v0] Fetching activity for task:", taskId)
 
