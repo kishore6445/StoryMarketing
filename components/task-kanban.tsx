@@ -22,7 +22,6 @@ interface TaskKanbanProps {
   isLoading?: boolean
   onTaskUpdate?: (taskId: string) => void
   onEditTask?: (task: Task) => void
-  onOpenTaskDetail?: (taskId: string) => void
   selectedTaskIds?: Set<string>
   onToggleTaskSelection?: (taskId: string) => void
   showCheckboxes?: boolean
@@ -30,7 +29,7 @@ interface TaskKanbanProps {
 
 const CARDS_PER_COLUMN_LIMIT = 6
 
-export function TaskKanban({ tasks, onTaskStatusChange, isLoading, onTaskUpdate, onEditTask, onOpenTaskDetail, selectedTaskIds, onToggleTaskSelection, showCheckboxes }: TaskKanbanProps) {
+export function TaskKanban({ tasks, onTaskStatusChange, isLoading, onTaskUpdate, onEditTask, selectedTaskIds, onToggleTaskSelection, showCheckboxes }: TaskKanbanProps) {
   const router = useRouter()
   const [draggedTask, setDraggedTask] = useState<Task | null>(null)
   const [sourceColumn, setSourceColumn] = useState<string | null>(null)
@@ -355,7 +354,7 @@ export function TaskKanban({ tasks, onTaskStatusChange, isLoading, onTaskUpdate,
                               onDragStart={() => handleDragStart(task, column.id)}
                               onClick={() => {
                                 if (!canOpenTaskWorkspace || !taskIdentifier) return
-                                onOpenTaskDetail?.(taskIdentifier)
+                                router.push(`/tasks/${encodeURIComponent(taskIdentifier)}`)
                               }}
                               style={{
                                 borderLeftColor: borderColor,
