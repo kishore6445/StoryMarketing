@@ -14,6 +14,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    console.log('[v0] Login attempt for email:', email)
+
     const supabase = getSupabaseClient();
 
     // Sign in with Supabase Auth
@@ -22,8 +24,10 @@ export async function POST(request: NextRequest) {
       password,
     });
 
+    console.log('[v0] Supabase auth result:', authError ? `Error: ${authError.message}` : 'Success')
+
     if (authError || !authData.user) {
-      console.error("[v0] Supabase Auth login error:", authError);
+      console.error("[v0] Supabase Auth login error:", authError?.message);
       return NextResponse.json(
         { error: "Invalid email or password" },
         { status: 401 }
@@ -32,6 +36,8 @@ export async function POST(request: NextRequest) {
 
     // Get user from custom users table
     const user = await getUserByEmail(email);
+    console.log('[v0] User from database:', user ? `Found: ${user.id}` : 'Not found')
+    
     if (!user) {
       return NextResponse.json(
         { error: "User profile not found" },
@@ -48,7 +54,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Create session token
+    console.log('[v0] Creating session token for user:', user.id)
     const sessionToken = await createSession(user.id, user.role);
+    console.log('[v0] Session token created successfully')
 
     // Return session token in response body (cookie method not working in dev)
     const response = NextResponse.json({
