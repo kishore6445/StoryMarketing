@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { CheckCircle2, Circle, Calendar, Zap, Clock, AlertCircle, Edit2, X, Loader2, LayoutGrid, Plus, User, Users, Upload, Trash2 } from "lucide-react"
 import useSWR from "swr"
 import { TaskKanban } from "./task-kanban"
+import { TaskDetailSlideOver } from "./task-detail-slide-over"
 import { SprintToolbarUnified } from "./sprint-toolbar-unified"
 import { WarBar } from "./war-bar"
 import { CriticalZoneBanner } from "./critical-zone-banner"
@@ -72,6 +73,7 @@ export function MyTasksToday() {
   const [bulkActionMode, setBulkActionMode] = useState<"select" | "priority" | "status" | null>(null)
   const [viewPromisesOnly, setViewPromisesOnly] = useState(false)
   const [sprintFilter, setSprintFilter] = useState<"current-sprint" | "backlog">("current-sprint")
+  const [selectedTaskDetailId, setSelectedTaskDetailId] = useState<string | null>(null)
   const [createFormData, setCreateFormData] = useState({
     title: "",
     description: "",
@@ -600,6 +602,7 @@ export function MyTasksToday() {
             onTaskStatusChange={handleStatusChange}
             isLoading={isLoading}
             onEditTask={handleEditTask}
+            onOpenTaskDetail={setSelectedTaskDetailId}
             selectedTaskIds={selectedTaskIds}
             onToggleTaskSelection={toggleTaskSelection}
             showCheckboxes={false}
@@ -929,6 +932,14 @@ export function MyTasksToday() {
           </div>
         </div>
       )}
+
+      {/* Task Detail Slide-Over */}
+      <TaskDetailSlideOver
+        isOpen={!!selectedTaskDetailId}
+        taskId={selectedTaskDetailId || ""}
+        onClose={() => setSelectedTaskDetailId(null)}
+        onTaskUpdated={() => mutate()}
+      />
     </div>
   )
 }
